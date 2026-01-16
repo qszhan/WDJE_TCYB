@@ -121,3 +121,12 @@ best_model = min(results, key=results.get)
 print(f"\nBest model: {best_model} (bound_transfer = {results[best_model]:.4f})")
 ```
 
+## Notes
+
+1. **Feature Extraction**: Features should be extracted from a pre-trained model (e.g., ResNet) before using WDJE.
+
+2. **Label Format**: Labels can be either one-hot encoded or soft predictions (probabilities).
+
+3. **Semi-supervised Setting**: If only partial target labels are available, pass only the labeled portion to `target_labels`.
+
+4. **Computational Complexity**: The Wasserstein distance computation has O(n^3) complexity. For large datasets, consider sampling. 
