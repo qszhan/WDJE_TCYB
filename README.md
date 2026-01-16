@@ -21,8 +21,7 @@ transfer_bound is calculated analytically below:
 ```
 transfer_bound = ε_s + L * λ * W_x + W_y + E_s + L * M * exp(-λ)
 ```
-
-Where:
+where:
 - `ε_s`: Source domain error
 - `L`: Lipschitz constant of the hypothesis
 - `λ`: Trade-off parameter balancing feature vs. label distance
