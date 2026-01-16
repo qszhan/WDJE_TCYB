@@ -3,15 +3,23 @@
 Python implementation of "To Transfer or Not to Transfer: Unified Transferability Metric and Analysis".
 
 ## Overview
-
-WDJE (Wasserstein Distance Joint Estimation) provides a theoretical framework for estimating the transfer learning bound between two domains. It uses optimal transport theory to measure the distribution discrepancy in both feature space and label space.
-
+WDJE is a unified transferability metric that helps determine whether transfer learning should be performed for both classification and regression tasks under domain and task differences. 
+It is built upon two key components: (1) a decision rule that determines whether transfer should be performed by comparing the estimated target risk with and without transfer, yielding the WDJE score, and (2) a computable target risk bound that provides the estimated target transfer risk used inside this decision rule.
+Beyond transfer decision-making, WDJE can also be used to select pretrained models, source/target domain pairs.
+ 
 ### Key Concept
-
-The transfer bound is computed as:
-
+The WDJE score for determining whether to transfer or not is computed as:
 ```
-Bound = ε_s + L * λ * W_x + W_y + E_s + L * M * exp(-λ)
+WDJE_score = transfer_bound - target_error
+```
+where the transfer_bound is the upper bound of target risk after transfer learning, and target_error is the true target risk obatined without transfer, based on target data only. 
+If WDJE_score <0, the task is transferable as the transfer results in a performance gain. Conversely, the task is nontransferable as the transfer results in a performance loss.
+
+
+
+transfer_bound is calculated analytically below:
+```
+transfer_bound = ε_s + L * λ * W_x + W_y + E_s + L * M * exp(-λ)
 ```
 
 Where:
@@ -22,6 +30,7 @@ Where:
 - `W_y`: Wasserstein distance between source and target labels
 - `E_s`: Expected norm of unlabeled source predictions
 - `M`: Scaling constant (typically log(num_classes))
+
 
 ## Installation
 
