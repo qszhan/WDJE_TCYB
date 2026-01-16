@@ -46,7 +46,10 @@ pip install numpy scipy pot scikit-learn
 
 ## Usage
 
-### Basic Usage
+
+### Example 1: WDJE for Transfer Decision
+
+Use `WDJE_score` to determine whether transfer learning should be performed. The decision rule is: if `WDJE_score < 0`, transfer is beneficial.
 
 ```python
 from wdje_open import wdje_score
@@ -58,14 +61,63 @@ source_labels = np.load('source_labels.npy')      # (n_source, num_classes)
 target_features = np.load('target_features.npy')  # (n_target, d)
 target_labels = np.load('target_labels.npy')      # (n_target, num_classes)
 
+# Errors: source_error from source model, target_error from training on target only
+source_error = 0.05   # Error of the pre-trained model on source domain
+target_error = 0.30   # Error from training on target data without transfer
+
 # Compute WDJE score
-result = wdje_score(
-    source_features=source_features,
-    source_labels=source_labels,
-    target_features=target_features,
-    target_labels=target_labels,
-    num_classes=10
+bound_transfer, WDJE_score = wdje_score(
+    source_features, source_labels,
+    target_features, target_labels,
+    num_classes=10,
+    source_error=source_error,
+    target_error=target_error
 )
 
-print(f"Transfer Bound: {result['bound_custom']:.4f}")
+# Transfer decision
+if WDJE_score < 0:
+    print(f"Transfer is beneficial (WDJE_score = {WDJE_score:.4f})")
+    print("Recommendation: Perform transfer learning")
+else:
+    print(f"Transfer is NOT beneficial (WDJE_score = {WDJE_score:.4f})")
+    print("Recommendation: Train on target data only")
 ```
+
+### Example 2: WDJE for Model/Domain Selection
+
+Use `bound_transfer` to select the best pre-trained model from a model zoo, or to select the best source/target domain pair. **Select the one with the smallest `bound_transfer`**.
+
+ 
+```python
+from wdje_open import wdje_score
+import numpy as np
+
+# Model zoo: different pre-trained models
+model_zoo = ['resnet50', 'vit_base', 'efficientnet', 'convnext']
+
+# Target domain data (fixed)
+target_features = np.load('target_features.npy')
+target_labels = np.load('target_labels.npy')
+
+results = {}
+for model_name in model_zoo:
+    # Load features extracted by each pre-trained model
+    source_features = np.load(f'{model_name}_source_features.npy')
+    source_labels = np.load(f'{model_name}_source_labels.npy')
+    source_error = np.load(f'{model_name}_source_error.npy')
+
+    bound_transfer, _ = wdje_score(
+        source_features, source_labels,
+        target_features, target_labels,
+        num_classes=10,
+        source_error=source_error,
+        target_error=0.0  # Not needed for model selection
+    )
+    results[model_name] = bound_transfer
+    print(f"{model_name}: bound_transfer = {bound_transfer:.4f}")
+
+# Select the model with smallest bound_transfer
+best_model = min(results, key=results.get)
+print(f"\nBest model: {best_model} (bound_transfer = {results[best_model]:.4f})")
+```
+
