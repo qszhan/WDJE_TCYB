@@ -81,13 +81,10 @@ def estimate_transfer_bound(
         p: Order of Wasserstein distance (default: 2)
 
     Returns:
-        Dictionary containing:
-            - 'bound_custom': Transfer bound using custom Wasserstein computation
-            - 'bound_emd2': Transfer bound using EMD2 Wasserstein
-            - 'wasserstein_x': Feature space Wasserstein distance (custom)
-            - 'wasserstein_y': Label space Wasserstein distance (custom)
-            - 'wasserstein_x_emd2': Feature space Wasserstein distance (EMD2)
-            - 'wasserstein_y_emd2': Label space Wasserstein distance (EMD2)
+        Dictionary containing:            
+            - 'bound': Transfer bound using EMD2 Wasserstein
+            - 'wasserstein_x': Feature space Wasserstein distance  
+            - 'wasserstein_y': Label space Wasserstein distance  
             - 'expected_norm': Expected norm of unlabeled predictions
             - 'regularization_constant': L * M * exp(-lambda)
             - 'lambda': Trade-off parameter used
