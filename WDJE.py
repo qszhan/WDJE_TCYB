@@ -1,13 +1,4 @@
-"""
-WDJE (Wasserstein Distance Joint Estimation) 
-This module provides the core functions for computing Wasserstein Distance-based
-transferability bounds between source and target domains.
-
-The main components are:
-1. Wasserstein distance calculation using optimal transport
-2. Transfer bound estimation combining feature and label distances
-"""
-
+ 
 import numpy as np
 import ot
 from scipy.spatial.distance import cdist
